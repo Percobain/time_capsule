@@ -2,12 +2,14 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use cosmwasm_std::Addr;
-use cw_storage_plus::Item;
+use cw_storage_plus::Map;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub struct State {
-    pub count: i32,
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct Capsule {
     pub owner: Addr,
+    pub message: String,
+    pub unlock_time: u64, // Timestamp when message can be accessed
 }
 
-pub const STATE: Item<State> = Item::new("state");
+// Store capsules by owner address
+pub const CAPSULES: Map<&Addr, Capsule> = Map::new("capsules");

@@ -1,26 +1,33 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
+use cosmwasm_std::Addr;
 
 #[cw_serde]
 pub struct InstantiateMsg {
-    pub count: i32,
+    // Empty - no initialization parameters needed
 }
 
 #[cw_serde]
 pub enum ExecuteMsg {
-    Increment {},
-    Reset { count: i32 },
+    // Store a new time capsule message
+    StoreMessage { 
+        message: String, 
+        unlock_time: u64 
+    },
 }
 
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {
-    // GetCount returns the current count as a json-encoded number
-    #[returns(GetCountResponse)]
-    GetCount {},
+    // Get a message if it's unlocked
+    #[returns(MessageResponse)]
+    GetMessage { owner: String },
 }
 
-// We define a custom struct for each query response
+// Response for the GetMessage query
 #[cw_serde]
-pub struct GetCountResponse {
-    pub count: i32,
+pub struct MessageResponse {
+    pub message: String,
+    pub owner: String,
+    pub unlock_time: u64,
+    pub is_unlocked: bool,
 }
