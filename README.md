@@ -17,7 +17,7 @@ This smart contract leverages several cutting-edge blockchain technologies:
 ## Features
 
 - Create time-locked capsules containing messages
-- Set unlock time for each capsule
+- Set unlock time for each capsule (use [Epoch Converter](https://www.epochconverter.com/) for timestamp conversion)
 - View capsule status and metadata
 - Retrieve capsule contents after unlock time
 - Owner-only content management
@@ -67,3 +67,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - [CosmWasm Documentation](https://docs.cosmwasm.com)
 - [Nibiru Chain Documentation](https://docs.nibiru.fi/)
 - [Rust Documentation](https://doc.rust-lang.org/)
+
