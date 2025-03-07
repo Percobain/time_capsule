@@ -1,4 +1,4 @@
-name: release wasm
+name: Release Time Capsule Contract
 
 on:
   release:
@@ -10,26 +10,29 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+
       - name: Install cargo-run-script
         uses: actions-rs/cargo@v1
         with:
           command: install
           args: cargo-run-script
-      - name: Run cargo optimize
-        uses: actions-rs/cargo@v1
+
+      - name: Optimize the wasm contract
+        uses: docker://cosmwasm/rust-optimizer:0.12.13
         with:
-          command: run-script
-          args: optimize
+          args: ./time_capsule
+        
       - name: Get release ID
         id: get_release
         uses: bruceadams/get-release@v1.2.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          
       - name: Upload optimized wasm
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./artifacts/*.wasm
+          file: ./artifacts/time_capsule.wasm
+          asset_name: time_capsule.wasm
           tag: ${{ github.ref }}
           overwrite: true
-          file_glob: true
