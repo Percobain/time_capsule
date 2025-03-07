@@ -15,4 +15,5 @@
 *.iml
 .idea
 
-artifacts
+# GitHub workflows
+/.github/workflows/
