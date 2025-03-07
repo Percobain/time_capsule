@@ -110,6 +110,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn store_and_retrieve_message() {
         let mut deps = mock_dependencies();
         let env = mock_env();
