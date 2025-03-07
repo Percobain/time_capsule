@@ -6,14 +6,14 @@ use cosmwasm_std::{
     WasmQuery,
 };
 
-use crate::msg::{ExecuteMsg, GetCountResponse, QueryMsg};
+use crate::msg::{ExecuteMsg, MessageResponse, QueryMsg};
 
-/// CwTemplateContract is a wrapper around Addr that provides a lot of helpers
-/// for working with this.
+/// TimeCapsuleContract is a wrapper around Addr that provides helpers
+/// for working with the time capsule contract.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub struct CwTemplateContract(pub Addr);
+pub struct TimeCapsuleContract(pub Addr);
 
-impl CwTemplateContract {
+impl TimeCapsuleContract {
     pub fn addr(&self) -> Addr {
         self.0.clone()
     }
@@ -28,20 +28,20 @@ impl CwTemplateContract {
         .into())
     }
 
-    /// Get Count
-    pub fn count<Q, T, CQ>(&self, querier: &Q) -> StdResult<GetCountResponse>
+    /// Get Message
+    pub fn get_message<Q, T, CQ>(&self, querier: &Q, owner: T) -> StdResult<MessageResponse>
     where
         Q: Querier,
         T: Into<String>,
         CQ: CustomQuery,
     {
-        let msg = QueryMsg::GetCount {};
+        let msg = QueryMsg::GetMessage { owner: owner.into() };
         let query = WasmQuery::Smart {
             contract_addr: self.addr().into(),
             msg: to_json_binary(&msg)?,
         }
         .into();
-        let res: GetCountResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
+        let res: MessageResponse = QuerierWrapper::<CQ>::new(querier).query(&query)?;
         Ok(res)
     }
 }
