@@ -42,8 +42,8 @@ cargo install cargo-run-script
 
 3. Clone and build:
 ```sh
-git clone https://github.com/yourusername/decentralized-time-capsule
-cd decentralized-time-capsule
+git clone https://github.com/percobain/time_capsule
+cd time_capsule
 cargo build
 ```
 
