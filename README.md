@@ -1,85 +1,69 @@
-# CosmWasm Starter Pack
+# Time Capsule Smart Contract
 
-This is a template to build smart contracts in Rust to run inside a
-[Cosmos SDK](https://github.com/cosmos/cosmos-sdk) module on all chains that enable it.
-To understand the framework better, please read the overview in the
-[cosmwasm repo](https://github.com/CosmWasm/cosmwasm/blob/master/README.md),
-and dig into the [cosmwasm docs](https://www.cosmwasm.com).
-This assumes you understand the theory and just want to get coding.
+A decentralized time capsule smart contract built on Nibiru Chain that allows users to store messages and assets that can only be accessed after a specified time period.
 
-## Creating a new repo from template
+## Overview
 
-Assuming you have a recent version of Rust and Cargo installed
-(via [rustup](https://rustup.rs/)),
-then the following should get you a new repo to start a contract:
+This smart contract leverages several cutting-edge blockchain technologies:
 
-Install [cargo-generate](https://github.com/ashleygwilliams/cargo-generate) and cargo-run-script.
-Unless you did that before, run this line now:
+- **CosmWasm** - A smart contracting platform built for the Cosmos ecosystem that enables WebAssembly (Wasm) smart contracts. CosmWasm provides a secure, lightweight, and efficient environment for executing smart contracts while maintaining cross-chain compatibility.
 
+- **WebAssembly (Wasm)** - A binary instruction format designed for stack-based virtual machines. Wasm enables high-performance execution of code in web browsers and blockchain environments with near-native speed, security, and platform independence.
+
+- **Rust** - Systems programming language that powers the contract logic, offering memory safety, thread safety, and zero-cost abstractions.
+
+- **Nibiru Chain** - A multi-VM blockchain platform in the Cosmos ecosystem that supports both Cosmos SDK and Ethereum Virtual Machine (EVM) environments. Nibiru enables developers to deploy both CosmWasm and Solidity smart contracts on the same chain, offering greater flexibility and interoperability.
+
+## Features
+
+- Create time-locked capsules containing messages
+- Set unlock time for each capsule
+- View capsule status and metadata
+- Retrieve capsule contents after unlock time
+- Owner-only content management
+
+## Contract Details
+
+- **Contract Address**: nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z
+- **Explorer**: View on [Nibiru Explorer](https://explorer.nibiru.fi/nibiru-testnet-2/cosmwasm/0/transactions?contract=nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z)
+
+## Development Setup
+
+1. Install Rust:
 ```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+2. Install required cargo tools:
+```sh 
 cargo install cargo-generate --features vendored-openssl
 cargo install cargo-run-script
 ```
 
-Now, use it to create your new contract.
-Go to the folder in which you want to place it and run:
-
-**Latest**
-
+3. Clone and build:
 ```sh
-cargo generate --git https://github.com/CosmWasm/cw-template.git --name PROJECT_NAME
+git clone https://github.com/yourusername/decentralized-time-capsule
+cd decentralized-time-capsule
+cargo build
 ```
 
-For cloning minimal code repo:
+## Testing
 
+Run unit tests:
 ```sh
-cargo generate --git https://github.com/CosmWasm/cw-template.git --name PROJECT_NAME -d minimal=true
+cargo test
 ```
 
-You will now have a new folder called `PROJECT_NAME` (I hope you changed that to something else)
-containing a simple working contract and build system that you can customize.
+## License
 
-## Create a Repo
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
 
-After generating, you have a initialized local git repo, but no commits, and no remote.
-Go to a server (eg. github) and create a new upstream repo (called `YOUR-GIT-URL` below).
-Then run the following:
+## Contributing
 
-```sh
-# this is needed to create a valid Cargo.lock file (see below)
-cargo check
-git branch -M main
-git add .
-git commit -m 'Initial Commit'
-git remote add origin YOUR-GIT-URL
-git push -u origin main
-```
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-## CI Support
+## References
 
-We have template configurations for both [GitHub Actions](.github/workflows/Basic.yml)
-and [Circle CI](.circleci/config.yml) in the generated project, so you can
-get up and running with CI right away.
-
-One note is that the CI runs all `cargo` commands
-with `--locked` to ensure it uses the exact same versions as you have locally. This also means
-you must have an up-to-date `Cargo.lock` file, which is not auto-generated.
-The first time you set up the project (or after adding any dep), you should ensure the
-`Cargo.lock` file is updated, so the CI will test properly. This can be done simply by
-running `cargo check` or `cargo unit-test`.
-
-## Using your project
-
-Once you have your custom repo, you should check out [Developing](./Developing.md) to explain
-more on how to run tests and develop code. Or go through the
-[online tutorial](https://docs.cosmwasm.com/) to get a better feel
-of how to develop.
-
-[Publishing](./Publishing.md) contains useful information on how to publish your contract
-to the world, once you are ready to deploy it on a running blockchain. And
-[Importing](./Importing.md) contains information about pulling in other contracts or crates
-that have been published.
-
-Please replace this README file with information about your specific project. You can keep
-the `Developing.md` and `Publishing.md` files as useful references, but please set some
-proper description in the README.
+- [CosmWasm Documentation](https://docs.cosmwasm.com)
+- [Nibiru Chain Documentation](https://docs.nibiru.fi/)
+- [Rust Documentation](https://doc.rust-lang.org/)
