@@ -1,5 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState} from 'react'
 import './App.css'
+import { NibiruTxClient, NibiruQuerier, Testnet } from '@nibiruchain/nibijs'
+
+// ESLint disable for specific rules we need to bypass
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+declare global {
+  interface Window {
+    leap?: {
+      enable: (chainId: string) => Promise<void>;
+      getOfflineSigner: (chainId: string) => any;
+    }
+  }
+}
 
 function App() {
   const [address, setAddress] = useState('')
@@ -11,34 +25,40 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
 
   // Connect wallet function
-// Connect wallet function
-const connectWallet = async () => {
-  try {
-    // Check if Leap is available
-    if (!window.leap) {
-      alert('Please install Leap wallet extension')
-      return
-    }
+  const connectWallet = async () => {
+    try {
+      // Check if Leap is available
+      if (!window.leap) {
+        alert('Please install Leap wallet extension')
+        return
+      }
 
-    // Request connection to Leap wallet
-    // Using nibiru-testnet-2 as the chainId
-    await window.leap.enable('nibiru-testnet-2')
-    
-    // Get the offline signer for the chain
-    const offlineSigner = window.leap.getOfflineSigner('nibiru-testnet-2')
-    
-    // Get user accounts
-    const accounts = await offlineSigner.getAccounts()
-    
-    // Set the first account's address
-    setAddress(accounts[0].address)
-    
-    console.log('Connected to wallet:', accounts[0].address)
-  } catch (error) {
-    console.error('Error connecting to wallet:', error)
-    alert('Failed to connect wallet: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      // Get the testnet configuration
+      const testnet = Testnet(2)
+      
+      // Request connection to Leap wallet
+      await window.leap?.enable(testnet.chainId)
+      
+      // Get the offline signer for the chain
+      const offlineSigner = window.leap?.getOfflineSigner(testnet.chainId)
+      
+      // Ensure offlineSigner exists
+      if (!offlineSigner) {
+        throw new Error('Failed to get offline signer')
+      }
+      
+      // Get user accounts
+      const accounts = await offlineSigner.getAccounts()
+      
+      // Set the first account's address
+      setAddress(accounts[0].address)
+      
+      console.log('Connected to wallet:', accounts[0].address)
+    } catch (error) {
+      console.error('Error connecting to wallet:', error)
+      alert('Failed to connect wallet: ' + (error instanceof Error ? error.message : 'Unknown error'))
+    }
   }
-}
 
   // Convert date to UNIX timestamp
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,18 +98,39 @@ const connectWallet = async () => {
       // Get the contract address from env variable
       const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS || 'nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z'
       
-      // Send transaction using Leap wallet
-      const result = await window.leap?.execute(
+      // Get the testnet configuration
+      const testnet = Testnet(2)
+      
+      // Check if leap is available
+      if (!window.leap) {
+        throw new Error('Leap wallet not available')
+      }
+      
+      // Enable wallet and get signer
+      await window.leap.enable(testnet.chainId)
+      const signer = window.leap.getOfflineSigner(testnet.chainId)
+      
+      const signingClient = await NibiruTxClient.connectWithSigner(testnet.endptTm, signer)
+
+      const feeString = JSON.stringify({
+        amount: [{ amount: '500000', denom: 'unibi' }],
+        gas: '1000000',
+      });
+      
+      // Parse the string back to an object
+      const fee = JSON.parse(feeString);
+      
+      // Log what we're actually sending
+      console.log('Using explicit fee (JSON parsed):', fee);
+      
+      // Execute the transaction with the parsed fee
+      const tx = await signingClient.wasmClient.execute(
         address,
         contractAddress,
         executeMsg,
-        'auto'
-      )
-
-      console.log('Transaction result:', result)
-      alert('Message stored successfully!')
-      setMessage('')
-      setUnlockTime('')
+        fee,
+        'Store time capsule message'
+      );
     } catch (error) {
       console.error('Error storing message:', error)
       alert('Failed to store message: ' + (error instanceof Error ? error.message : 'Unknown error'))
@@ -118,8 +159,14 @@ const connectWallet = async () => {
       // Get the contract address from env variable
       const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS || 'nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z'
       
-      // Query contract using Leap wallet
-      const result = await window.leap?.query(
+      // Get the testnet configuration
+      const testnet = Testnet(2)
+      
+      // Create querier client
+      const querier = await NibiruQuerier.connect(testnet.endptTm)
+      
+      // Query the contract
+      const result = await querier.nibiruExtensions.wasm.queryContractSmart(
         contractAddress,
         queryMsg
       )
@@ -144,12 +191,6 @@ const connectWallet = async () => {
       setIsLoading(false)
     }
   }
-
-  // Add Leap wallet type definition
-  useEffect(() => {
-    // Add type definition for window.leap
-    window.leap
-  }, [])
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -245,6 +286,7 @@ const connectWallet = async () => {
   )
 }
 
+// Add type definitions
 interface ExecuteMessage {
   store_message: {
     message: string;
@@ -262,17 +304,6 @@ interface QueryResult {
   message: string;
   is_unlocked: boolean;
   unlock_time: number;
-}
-
-// Add type definition for Leap wallet
-declare global {
-  interface Window {
-    leap?: {
-      enable: (chainId: string) => Promise<{addresses: string[]}>
-      execute: (senderAddress: string, contractAddress: string, msg: ExecuteMessage, fee: string) => Promise<{transactionHash: string}>
-      query: (contractAddress: string, queryMsg: QueryMessage) => Promise<QueryResult>
-    }
-  }
 }
 
 export default App
