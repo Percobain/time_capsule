@@ -24,10 +24,11 @@ function App() {
   const [unlockDate, setUnlockDate] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS
+
   // Connect wallet function
   const connectWallet = async () => {
     try {
-      // Check if Leap is available
       if (!window.leap) {
         alert('Please install Leap wallet extension')
         return
@@ -67,77 +68,64 @@ function App() {
     setUnlockTime(timestamp.toString())
   }
 
-  // Store message in time capsule
+
   const storeMessage = async () => {
     if (!address) {
-      alert('Please connect your wallet first')
-      return
+      alert('Please connect your wallet first');
+      return;
     }
-
     if (!message) {
-      alert('Please enter a message')
-      return
+      alert('Please enter a message');
+      return;
     }
-
     if (!unlockTime) {
-      alert('Please set an unlock time')
-      return
+      alert('Please set an unlock time');
+      return;
     }
-
+  
     try {
-      setIsLoading(true)
-      
-      // Format the execute message
+      setIsLoading(true);
+  
       const executeMsg = {
         store_message: {
           message: message,
-          unlock_time: parseInt(unlockTime)
-        }
-      }
-
-      // Get the contract address from env variable
-      const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS || 'nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z'
-      
-      // Get the testnet configuration
-      const testnet = Testnet(2)
-      
-      // Check if leap is available
+          unlock_time: parseInt(unlockTime),
+        },
+      };
+  
+      const testnet = Testnet(2);
       if (!window.leap) {
-        throw new Error('Leap wallet not available')
+        throw new Error('Leap wallet not available');
       }
-      
-      // Enable wallet and get signer
-      await window.leap.enable(testnet.chainId)
-      const signer = window.leap.getOfflineSigner(testnet.chainId)
-      
-      const signingClient = await NibiruTxClient.connectWithSigner(testnet.endptTm, signer)
+  
+      await window.leap.enable(testnet.chainId);
+      const signer = window.leap.getOfflineSigner(testnet.chainId);
 
-      const feeString = JSON.stringify({
-        amount: [{ amount: '500000', denom: 'unibi' }],
-        gas: '1000000',
-      });
-      
-      // Parse the string back to an object
-      const fee = JSON.parse(feeString);
-      
-      // Log what we're actually sending
-      console.log('Using explicit fee (JSON parsed):', fee);
-      
-      // Execute the transaction with the parsed fee
+      const signingClient = await NibiruTxClient.connectWithSigner(
+        testnet.endptTm,
+        signer
+      );
+
       const tx = await signingClient.wasmClient.execute(
         address,
         contractAddress,
         executeMsg,
-        fee,
-        'Store time capsule message'
+        "auto",
+        "Store time capsule message",
+        []
       );
+
+      alert("Message stored successfully!");
+      setMessage("");
+      setUnlockTime("");
     } catch (error) {
-      console.error('Error storing message:', error)
-      alert('Failed to store message: ' + (error instanceof Error ? error.message : 'Unknown error'))
+      console.error("Error storing message:", error);
+      alert("Failed to store message: " + 
+        (error instanceof Error ? error.message : String(error)));
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Get stored message
   const getMessage = async () => {
@@ -155,9 +143,6 @@ function App() {
           owner: address
         }
       }
-
-      // Get the contract address from env variable
-      const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS || 'nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z'
       
       // Get the testnet configuration
       const testnet = Testnet(2)
@@ -284,26 +269,6 @@ function App() {
       </div>
     </div>
   )
-}
-
-// Add type definitions
-interface ExecuteMessage {
-  store_message: {
-    message: string;
-    unlock_time: number;
-  };
-}
-
-interface QueryMessage {
-  get_message: {
-    owner: string;
-  };
-}
-
-interface QueryResult {
-  message: string;
-  is_unlocked: boolean;
-  unlock_time: number;
 }
 
 export default App
