@@ -1,6 +1,7 @@
 import { Ripple } from "../components/magicui/ripple";
 import { Link } from "react-router-dom";
 import { ShineBorder } from "../components/magicui/shine-border";
+import { AuroraText } from "../components/magicui/aurora-text";
 
 export default function Home() {
   return (
@@ -20,12 +21,17 @@ export default function Home() {
         
         {/* Main content area */}
         <div className="flex w-full flex-col items-center justify-center text-center">
-          <h1 className="mb-6 bg-gradient-to-r from-purple-300 to-indigo-400 bg-clip-text text-5xl font-bold tracking-tight text-transparent md:text-6xl lg:text-7xl">
-            Time Capsule
+          <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+            <AuroraText 
+              colors={["#9F7E69", "#F7FFE0", "#9F7E69", "#F7FFE0"]} 
+              speed={1.9}
+            >
+              Time Capsule
+            </AuroraText>
           </h1>
           
           <p className="mb-8 max-w-2xl text-lg text-gray-300 md:text-xl">
-            Preserve your memories today, unlock them tomorrow. Create digital time capsules
+            Manifest your future, revisit your journey. Create digital time capsules
             that can be opened at a future date of your choosing.
           </p>
           
@@ -55,11 +61,19 @@ export default function Home() {
               />
               <div className="p-5">
                 <div className="mb-4">
-                  <h3 className="text-purple-300 text-xl font-semibold">Leap Wallet</h3>
+                  <h3 className="text-xl font-semibold">
+                    <AuroraText 
+                      colors={["#D1E3DD", "#E3655B", "#5B8C5A"]} 
+                      speed={1.2}
+                      className="text-xl"
+                    >
+                      Leap Wallet
+                    </AuroraText>
+                  </h3>
                   <div className="mt-1 h-0.5 w-16 bg-gradient-to-r from-purple-500 to-purple-300 opacity-60"></div>
                 </div>
                 <p className="text-gray-300 text-sm mb-4">
-                  Your memories are safely stored using advanced blockchain technology. Install the Leap Wallet extension to get started.
+                  Your intentions are safely stored using advanced blockchain technology. Install the Leap Wallet extension to get started.
                 </p>
                 <div className="pt-2">
                   <a href="https://www.leapwallet.io/" target="_blank" rel="noopener" className="inline-flex items-center text-xs text-purple-300 hover:text-purple-200">
@@ -81,11 +95,19 @@ export default function Home() {
               />
               <div className="p-5">
                 <div className="mb-4">
-                  <h3 className="text-purple-300 text-xl font-semibold">Nibiru Chain</h3>
+                  <h3 className="text-xl font-semibold">
+                    <AuroraText 
+                      colors={["#9333EA", "#7C3AED", "#A855F7"]} 
+                      speed={0.8}
+                      className="text-xl"
+                    >
+                      Nibiru Chain
+                    </AuroraText>
+                  </h3>
                   <div className="mt-1 h-0.5 w-16 bg-gradient-to-r from-purple-500 to-purple-300 opacity-60"></div>
                 </div>
                 <p className="text-gray-300 text-sm mb-4">
-                  Connect your Leap Wallet to the Nibiru chain to create time-locked capsules that open exactly when you want them to.
+                  Connect your Leap Wallet to the Nibiru chain to create time-locked intentions that open exactly when you want them to.
                 </p>
                 <div className="pt-2">
                   <a href="https://nibiru.fi/" target="_blank" rel="noopener" className="inline-flex items-center text-xs text-purple-300 hover:text-purple-200">
@@ -107,7 +129,15 @@ export default function Home() {
               />
               <div className="p-5">
                 <div className="mb-4">
-                  <h3 className="text-purple-300 text-xl font-semibold">Nibiru Faucet</h3>
+                  <h3 className="text-xl font-semibold">
+                    <AuroraText 
+                      colors={["#7C3AED", "#6366F1", "#818CF8"]} 
+                      speed={1}
+                      className="text-xl"
+                    >
+                      Nibiru Faucet
+                    </AuroraText>
+                  </h3>
                   <div className="mt-1 h-0.5 w-16 bg-gradient-to-r from-purple-500 to-purple-300 opacity-60"></div>
                 </div>
                 <p className="text-gray-300 text-sm mb-4">
