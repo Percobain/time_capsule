@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format } from "date-fns";
 import WalletConnect from '../components/WalletConnect';
 import MessageStore from '../components/MessageStore';
@@ -16,7 +16,9 @@ export default function Capsule() {
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>("00:00");
   const [timestamp, setTimestamp] = useState<string | undefined>(undefined);
+  const [message, setMessage] = useState<string>('');
   const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
+  const messageRef = useRef<HTMLTextAreaElement>(null);
 
   // Function to handle successful wallet connection
   const handleConnect = (address: string) => {
@@ -100,6 +102,22 @@ export default function Capsule() {
                   </h4>
                 </div>
                 <div className="bg-[#0D0F21]/80 p-3 rounded-xl border border-[#4361EE]/10">
+                  {/* First section: Message Input */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-white mb-1.5">
+                      Your Message
+                    </label>
+                    <textarea 
+                      className="w-full px-3 py-2 bg-[#181B2E] border border-[#252A44] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#4CC9F0] focus:border-[#4CC9F0]"
+                      rows={3}
+                      placeholder="Enter your message here..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      ref={messageRef}
+                    />
+                  </div>
+
+                  {/* Second section: Date Time Picker */}
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-white mb-1.5">
                       Unlock Date & Time
@@ -148,14 +166,16 @@ export default function Capsule() {
                     )}
                   </div>
 
-                  {/* Use only the Shadcn date picker for MessageStore */}
+                  {/* Pass the timestamp and message to MessageStore but hide the input fields */}
                   <MessageStore 
                     address={address} 
                     isLoading={isLoading} 
                     setIsLoading={setIsLoading} 
                     contractAddress={contractAddress}
                     timestamp={timestamp}
-                    hideTimePicker={true} // Add this prop to hide the built-in date picker
+                    hideTimePicker={true}
+                    hideMessageInput={true}
+                    onlyShowButton={true}
                   />
                 </div>
               </div>
@@ -199,70 +219,6 @@ export default function Capsule() {
           </div>
         </div>
       </div>
-
-      {/* Add global styles for the Shadcn components and ensure text colors are white */}
-      <style>{`
-        /* Base text color for the entire calendar */
-        .rdp {
-          color: white !important;
-        }
-        
-        /* Calendar background */
-        .rdp-months {
-          background-color: #0D0F21;
-        }
-        
-        /* Calendar day cells */
-        .rdp-cell {
-          color: #FFFFFF;
-        }
-        
-        /* Selected day */
-        .rdp-day_selected {
-          background-color: #4CC9F0 !important;
-          color: #0D0F21 !important;
-          font-weight: bold;
-        }
-        
-        /* Today's date */
-        .rdp-day_today {
-          background-color: #252A44 !important;
-          color: #4CC9F0 !important;
-          font-weight: bold;
-        }
-        
-        /* Hover state for buttons */
-        .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-          background-color: #252A44 !important;
-          color: white !important;
-        }
-        
-        /* Day names in header */
-        .rdp-head_cell {
-          color: #FFFFFF;
-          font-weight: 500;
-        }
-        
-        /* Month caption */
-        .rdp-caption {
-          color: #FFFFFF;
-        }
-        
-        /* Navigation buttons */
-        .rdp-nav_button {
-          color: #4CC9F0;
-        }
-        
-        /* Fix for any hidden text */
-        input, button, select, textarea {
-          color: white;
-        }
-        
-        /* Fix for placeholder text */
-        ::placeholder {
-          color: rgba(255, 255, 255, 0.5) !important;
-        }
-      `}</style>
     </div>
   );
 }
