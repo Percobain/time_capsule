@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { NibiruTxClient, Testnet } from '@nibiruchain/nibijs';
 import { Input } from "../components/ui/input";
+import { Spinner } from "../components/ui/spinner";
+import { toast } from 'sonner';
+import { CheckCircle } from 'lucide-react';
 
 interface MessageStoreProps {
   address: string;
@@ -46,18 +49,29 @@ const MessageStore = ({
     }
 
     if (!address) {
-      alert('Please connect your wallet first');
+      toast.error('Wallet not connected', {
+        description: 'Please connect your wallet first'
+      });
       return;
     }
     if (!currentMessage) {
-      alert('Please enter a message');
+      toast.error('Message required', {
+        description: 'Please enter a message for your time capsule'
+      });
       return;
     }
     if (!unlockTime) {
-      alert('Please set an unlock time');
+      toast.error('Unlock time required', {
+        description: 'Please set a date and time for your capsule to unlock'
+      });
       return;
     }
   
+    // Show loading toast
+    const loadingToast = toast.loading('Creating time capsule...', {
+      description: 'Please confirm the transaction in your wallet'
+    });
+    
     try {
       setIsLoading(true);
   
@@ -70,6 +84,10 @@ const MessageStore = ({
   
       const testnet = Testnet(2);
       if (!window.leap) {
+        toast.dismiss(loadingToast);
+        toast.error('Wallet not available', {
+          description: 'Leap wallet extension not detected'
+        });
         throw new Error('Leap wallet not available');
       }
   
@@ -89,9 +107,18 @@ const MessageStore = ({
         "Store time capsule message",
         []
       );
+      
       console.log("Transaction hash:", tx);
-
-      alert("Message stored successfully!");
+      
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+      
+      // Show success toast
+      toast.success('Time capsule created!', {
+        description: 'Your message has been stored successfully',
+        icon: <CheckCircle className="h-4 w-4" />,
+        duration: 5000,
+      });
       
       // Reset the form
       setMessage("");
@@ -111,14 +138,19 @@ const MessageStore = ({
       
     } catch (error) {
       console.error("Error storing message:", error);
-      alert("Failed to store message: " + 
-        (error instanceof Error ? error.message : String(error)));
+      
+      // Make sure to dismiss loading toast on error
+      toast.dismiss(loadingToast);
+      
+      toast.error('Failed to store message', {
+        description: error instanceof Error ? error.message : String(error),
+        duration: 5000,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // If we only want to show the button (using parent's UI for the rest)
   if (onlyShowButton) {
     return (
       <button 
@@ -126,7 +158,14 @@ const MessageStore = ({
         disabled={isLoading || !address || !unlockTime}
         className="w-full bg-gradient-to-r from-[#4361EE] to-[#7209B7] text-white py-2 px-4 rounded-lg hover:shadow-lg hover:shadow-[#7209B7]/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[#252A44] disabled:from-[#252A44] disabled:to-[#252A44]"
       >
-        {isLoading ? 'Creating Capsule...' : 'Create Capsule'}
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2">
+            <Spinner className="h-4 w-4 text-white" />
+            <span>Creating Capsule...</span>
+          </div>
+        ) : (
+          'Create Capsule'
+        )}
       </button>
     );
   }
@@ -177,7 +216,14 @@ const MessageStore = ({
         disabled={isLoading || !address || !unlockTime}
         className="w-full bg-gradient-to-r from-[#4361EE] to-[#7209B7] text-white py-2 px-4 rounded-lg hover:shadow-lg hover:shadow-[#7209B7]/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[#252A44] disabled:from-[#252A44] disabled:to-[#252A44]"
       >
-        {isLoading ? 'Creating Capsule...' : 'Create Capsule'}
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2">
+            <Spinner className="h-4 w-4 text-white" />
+            <span>Creating Capsule...</span>
+          </div>
+        ) : (
+          'Create Capsule'
+        )}
       </button>
     </div>
   );

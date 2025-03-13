@@ -51,6 +51,20 @@ export default function Capsule() {
     setTimestamp(newTimestamp ? newTimestamp.toString() : undefined);
   }, [date, time]);
 
+  // Helper function to check if a date is in the past
+  const isPastDate = (date: Date) => {
+    // Create today's date at midnight for comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Create comparison date at midnight
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+    
+    // Return true if date is before today (allow today's date)
+    return compareDate < today;
+  };
+
   return (
     <div className="min-h-screen bg-[#080816] p-4 text-white">
       <Toaster position="top-right" richColors />
@@ -141,7 +155,7 @@ export default function Capsule() {
                             mode="single"
                             selected={date}
                             onSelect={setDate}
-                            disabled={(date) => date < new Date()}
+                            disabled={isPastDate} // Fix: Use our custom function instead
                             initialFocus
                             className="bg-[#0D0F21] text-white"
                           />
