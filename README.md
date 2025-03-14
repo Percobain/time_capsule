@@ -1,69 +1,54 @@
-# Time Capsule Smart Contract
+# Time Capsule
 
-A decentralized time capsule smart contract built on Nibiru Chain that allows users to store messages and assets that can only be accessed after a specified time period.
+A decentralized time capsule application built on Nibiru Chain that allows users to store messages and assets that can only be accessed after a specified time period.
 
-## Overview
+[Try the live demo](https://time-capsule-woad.vercel.app/)
 
-This smart contract leverages several cutting-edge blockchain technologies:
+![Time Capsule Demo](frontend/public/timecapsule.gif)
 
-- **CosmWasm** - A smart contracting platform built for the Cosmos ecosystem that enables WebAssembly (Wasm) smart contracts. CosmWasm provides a secure, lightweight, and efficient environment for executing smart contracts while maintaining cross-chain compatibility.
+## Architecture
 
-- **WebAssembly (Wasm)** - A binary instruction format designed for stack-based virtual machines. Wasm enables high-performance execution of code in web browsers and blockchain environments with near-native speed, security, and platform independence.
+### 1. CosmWasm Smart Contract
 
-- **Rust** - Systems programming language that powers the contract logic, offering memory safety, thread safety, and zero-cost abstractions.
+The smart contract handles:
+- Message storage with time-locking mechanism
+- Timestamp validation for unlocking
+- State management using cw-storage-plus
+- Query and execute message handling
 
-- **Nibiru Chain** - A multi-VM blockchain platform in the Cosmos ecosystem that supports both Cosmos SDK and Ethereum Virtual Machine (EVM) environments. Nibiru enables developers to deploy both CosmWasm and Solidity smart contracts on the same chain, offering greater flexibility and interoperability.
+**Core Components:**
+- Rust-based contract logic
+- CosmWasm framework
+- WebAssembly compilation
+- Integration tests with cw-multi-test
+
+### 2. Frontend
+
+Modern web application featuring:
+- React with TypeScript
+- TailwindCSS, Shadcn UI, MagicUI and KokonutUI components
+- Leap wallet & Metamask integration
+- Nibiru Chain JavaScript SDK (NibiJS)
+- Real-time blockchain interaction
+- Responsive design
+
+### 3. Deployment on Nibiru Blockchain
+
+- Contract deployed on Nibiru testnet: `nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z`
+- Frontend hosted on Vercel
+- Leap wallet for transaction signing
+- Support for Nibiru's testnet environment
 
 ## Features
 
-- Create time-locked capsules containing messages
-- Set unlock time for each capsule (use [Epoch Converter](https://www.epochconverter.com/) for timestamp conversion)
+- Create time-locked message capsules
+- Set unlock times using epoch timestamps
 - View capsule status and metadata
-- Retrieve capsule contents after unlock time
-- Owner-only content management
-
-## Contract Details
-
-- **Contract Address**: nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z
-
-## Development Setup
-
-1. Install Rust:
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-2. Install required cargo tools:
-```sh 
-cargo install cargo-generate --features vendored-openssl
-cargo install cargo-run-script
-```
-
-3. Clone and build:
-```sh
-git clone https://github.com/percobain/time_capsule
-cd time_capsule
-cargo build
-```
-
-## Testing
-
-Run unit tests:
-```sh
-cargo test
-```
-
-## License
-
-This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+- Retrieve messages after unlock time
+- Owner-only message management
 
 ## References
 
-- [CosmWasm Documentation](https://docs.cosmwasm.com)
-- [Nibiru Chain Documentation](https://docs.nibiru.fi/)
-- [Rust Documentation](https://doc.rust-lang.org/)
-
+- [CosmWasm Docs](https://docs.cosmwasm.com)
+- [Nibiru Chain Docs](https://docs.nibiru.fi/)
+- [Rust Docs](https://doc.rust-lang.org/)
