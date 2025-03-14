@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NibiruQuerier, Testnet } from '@nibiruchain/nibijs';
-import { Clock, Lock, Unlock, MessageSquare, Hourglass, Calendar, Timer } from 'lucide-react';
+import { Clock, Lock, Unlock, MessageSquare, Hourglass, Calendar, Timer, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Spinner } from "./ui/spinner";
@@ -26,6 +26,7 @@ const MessageRetriever = ({
   const [hasMessage, setHasMessage] = useState(false);
   const [isRetrieving, setIsRetrieving] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   // Get stored message
   const getMessage = async () => {
@@ -71,6 +72,7 @@ const MessageRetriever = ({
       setIsUnlocked(result.is_unlocked);
       setUnlockTimestamp(result.unlock_time);
       setHasMessage(true);
+      setExpanded(true); // Auto-expand when we retrieve a message
       
       // Convert UNIX timestamp to readable date
       const date = new Date(result.unlock_time * 1000);
@@ -133,140 +135,169 @@ const MessageRetriever = ({
     }
   }, [unlockTimestamp]);
 
+  const toggleExpanded = () => setExpanded(!expanded);
+
   return (
     <div className="w-full">
-      <button 
-        onClick={getMessage}
-        disabled={isLoading || !address || isRetrieving}
-        className="w-full bg-gradient-to-r from-[#F72585] to-[#7209B7] text-white py-2 px-4 rounded-lg hover:shadow-lg hover:shadow-[#F72585]/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[#252A44] disabled:from-[#252A44] disabled:to-[#252A44] focus:outline-none focus:ring-2 focus:ring-[#F72585]/50"
-      >
-        {isRetrieving ? (
-          <div className="flex items-center justify-center gap-2">
-            <Spinner className="h-4 w-4 text-white" />
-            <span>Retrieving Capsule...</span>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            <span>Retrieve My Capsule</span>
-          </div>
-        )}
-      </button>
+      {!hasMessage && (
+        <button 
+          onClick={getMessage}
+          disabled={isLoading || !address || isRetrieving}
+          className="w-full bg-gradient-to-r from-[#F72585] to-[#7209B7] text-white py-2 px-4 rounded-lg hover:shadow-lg hover:shadow-[#F72585]/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[#252A44] disabled:from-[#252A44] disabled:to-[#252A44] focus:outline-none focus:ring-2 focus:ring-[#F72585]/50"
+        >
+          {isRetrieving ? (
+            <div className="flex items-center justify-center gap-2">
+              <Spinner className="h-4 w-4 text-white" />
+              <span>Retrieving Capsule...</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span>Retrieve My Capsule</span>
+            </div>
+          )}
+        </button>
+      )}
       
       {hasMessage && (
         <div className={cn(
-          "mt-5 rounded-lg border backdrop-blur-sm p-4 transition-all duration-500 animate-fade-in",
+          "rounded-lg border backdrop-blur-sm transition-all duration-300",
           isUnlocked 
             ? "border-[#4CC9F0]/30 bg-gradient-to-br from-[#4CC9F0]/10 to-transparent" 
             : "border-[#F72585]/30 bg-gradient-to-br from-[#F72585]/10 to-transparent"
         )}>
-          {/* Status Badge & Time Display Row */}
-          <div className="flex items-center justify-between mb-4">
-            <div className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-sm",
-              isUnlocked 
-                ? "bg-[#4CC9F0]/20 text-[#4CC9F0] shadow-[#4CC9F0]/10" 
-                : "bg-[#F72585]/20 text-[#F72585] shadow-[#F72585]/10"
-            )}>
-              {isUnlocked ? (
-                <>
-                  <Unlock className="h-3 w-3" />
-                  <span className="animate-pulse-slow">Unlocked</span>
-                </>
-              ) : (
-                <>
-                  <Lock className="h-3 w-3" />
-                  <span>Locked</span>
-                </>
+          {/* Header section - Always visible */}
+          <div 
+            className="p-3 flex items-center justify-between cursor-pointer"
+            onClick={toggleExpanded}
+          >
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              {/* Status indicator */}
+              <div className={cn(
+                "flex-shrink-0 flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+                isUnlocked 
+                  ? "bg-[#4CC9F0]/20 text-[#4CC9F0]" 
+                  : "bg-[#F72585]/20 text-[#F72585]"
+              )}>
+                {isUnlocked ? (
+                  <>
+                    <Unlock className="h-3 w-3" />
+                    <span>Unlocked</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="h-3 w-3" />
+                    <span>Locked</span>
+                  </>
+                )}
+              </div>
+              
+              {/* Time info - compact */}
+              <div className="flex items-center gap-1.5 text-xs text-white/60 truncate">
+                <Calendar className="h-3 w-3 flex-shrink-0" />
+                <span className="hidden sm:inline truncate">
+                  {unlockTimestamp && format(new Date(unlockTimestamp * 1000), "PPP")}
+                </span>
+                <span className="sm:hidden truncate">
+                  {unlockTimestamp && format(new Date(unlockTimestamp * 1000), "MMM d")}
+                </span>
+              </div>
+              
+              {/* Countdown badge - only if locked */}
+              {!isUnlocked && timeRemaining && (
+                <div className="flex-shrink-0 flex items-center gap-1 bg-[#181B2E] text-[#4CC9F0] text-xs rounded-full px-2 py-0.5">
+                  <Timer className="h-3 w-3" />
+                  <span className="tabular-nums">{timeRemaining}</span>
+                </div>
               )}
             </div>
             
-            {/* Time display */}
-            <div className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs",
-              isUnlocked 
-                ? "text-[#4CC9F0]/70"
-                : "text-[#F72585]/70"
-            )}>
-              <Clock className="h-3 w-3" />
-              {isUnlocked ? 'Unlocked on:' : 'Unlocks on:'}
+            {/* Retrieve again button + expand/collapse control */}
+            <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  getMessage();
+                }}
+                disabled={isRetrieving}
+                className="bg-[#181B2E] hover:bg-[#252A44] text-white/80 text-xs rounded-lg px-2 py-1 flex items-center gap-1 transition-colors"
+              >
+                {isRetrieving ? (
+                  <Spinner className="h-3 w-3" />
+                ) : (
+                  <span>Refresh</span>
+                )}
+              </button>
+              
+              {expanded ? (
+                <ChevronUp className="h-4 w-4 text-white/60" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-white/60" />
+              )}
             </div>
           </div>
           
-          {/* Unlock date info */}
-          <div className="mb-5 bg-[#0D0F21]/70 p-3 rounded-lg border border-[#252A44]/50">
-            <div className="flex items-start">
-              <div className="p-2 mr-3 bg-[#181B2E] rounded-md">
-                <Calendar className={cn(
-                  "h-5 w-5",
-                  isUnlocked ? "text-[#4CC9F0]" : "text-[#F72585]"
-                )} />
-              </div>
-              
-              <div className="flex-1">
-                <div className="text-sm text-white font-medium">
-                  {unlockTimestamp && format(new Date(unlockTimestamp * 1000), "PPP 'at' p")}
-                </div>
-                
-                {!isUnlocked && timeRemaining && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className={cn(
-                      "flex items-center gap-1 text-xs font-medium rounded-full px-2 py-0.5",
-                      "bg-[#181B2E] text-[#4CC9F0]"
-                    )}>
-                      <Timer className="h-3 w-3" />
-                      <span className="tabular-nums">{timeRemaining}</span>
+          {/* Expandable content section */}
+          {expanded && (
+            <div className="p-3 pt-0 border-t border-[#252A44]/30 animate-fade-in">
+              {/* Message content */}
+              <div className={cn(
+                "rounded-lg border p-4 text-sm mt-3",
+                isUnlocked
+                  ? "border-[#4CC9F0]/20 bg-[#181B2E] text-white"
+                  : "border-[#F72585]/20 bg-[#181B2E]/70 text-white/50"
+              )}>
+                {isUnlocked ? (
+                  <div className="relative">
+                    <div className="absolute -top-1 -right-1 h-6 w-6 bg-[#4CC9F0]/20 rounded-full animate-ping-slow opacity-75"></div>
+                    <p className="whitespace-pre-wrap break-words">{storedMessage}</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 py-1">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-[#F72585]/20 rounded-full animate-ping opacity-75"></div>
+                      <Lock className="h-5 w-5 text-[#F72585] relative z-10" />
                     </div>
-                    <div className="h-1.5 w-1.5 bg-[#F72585] rounded-full animate-pulse"></div>
+                    <p className="opacity-70">This message is locked until the specified time.</p>
+                    <Hourglass className="h-4 w-4 text-[#F72585]/50 ml-auto animate-flip-slow" />
                   </div>
                 )}
               </div>
             </div>
-          </div>
-          
-          {/* Message content with styling based on lock status */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2 text-sm text-white/90">
-                <MessageSquare className="h-3.5 w-3.5" />
-                <h3 className="font-medium">Your Message</h3>
-              </div>
-              
-              {!isUnlocked && (
-                <div className="flex items-center gap-1 text-xs text-[#F72585]/70">
-                  <Lock className="h-3 w-3" />
-                  <span>Time-locked</span>
-                </div>
-              )}
-            </div>
-            
-            <div className={cn(
-              "rounded-lg border p-4 text-sm transition-all duration-500",
-              isUnlocked
-                ? "border-[#4CC9F0]/20 bg-[#181B2E] text-white"
-                : "border-[#F72585]/20 bg-[#181B2E]/70 text-white/50"
-            )}>
-              {isUnlocked ? (
-                <div className="relative">
-                  <div className="absolute -top-1 -right-1 h-6 w-6 bg-[#4CC9F0]/20 rounded-full animate-ping-slow opacity-75"></div>
-                  <p className="whitespace-pre-wrap break-words">{storedMessage}</p>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 px-4">
-                  <div className="relative mb-4">
-                    <div className="absolute inset-0 bg-[#F72585]/20 rounded-full animate-ping opacity-75"></div>
-                    <Lock className="h-7 w-7 text-[#F72585] relative z-10" />
-                  </div>
-                  <p className="text-center opacity-70">This message is locked until the specified time.</p>
-                  <div className="mt-4 text-center">
-                    <Hourglass className="h-4 w-4 text-[#F72585]/50 mx-auto animate-flip-slow" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       )}
+      
+      {/* Custom animations */}
+      <style jsx>{`
+        @keyframes ping-slow {
+          0% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.4); opacity: 0.3; }
+          100% { transform: scale(1); opacity: 0.8; }
+        }
+        
+        @keyframes flip-slow {
+          0% { transform: rotateX(0deg); }
+          100% { transform: rotateX(180deg); }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-ping-slow {
+          animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        
+        .animate-flip-slow {
+          animation: flip-slow 2s linear infinite;
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };

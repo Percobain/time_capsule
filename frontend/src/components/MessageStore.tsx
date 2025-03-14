@@ -179,7 +179,7 @@ const MessageStore = ({
             Your Message
           </label>
           <textarea 
-            className="w-full px-3 py-2 bg-[#181B2E] border border-[#252A44] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#4CC9F0] focus:border-[#4CC9F0]" 
+            className="w-full px-3 py-2 bg-[#181B2E] border border-[#252A44] rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-[#4CC9F0] focus:border-[#4CC9F0] scrollbar-thin scrollbar-thumb-[#4CC9F0] scrollbar-track-[#252A44] hover:scrollbar-thumb-[#7209B7] transition-colors" 
             rows={3}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
