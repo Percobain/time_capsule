@@ -100,7 +100,7 @@ const applyParticleEffect = (
 
       particle.appendChild(circleSVG);
     } else if (particleType === "nibirulogo") {
-      const logoPath = "/src/assets/nibirulogo.svg";
+      const logoPath = "/nibirulogo.svg";
       particle.innerHTML = `<img src="${logoPath}" width="${size}" height="${size}" alt="Nibiru Logo">`;
     } else {
       particle.innerHTML = `<img src="${particleType}" width="${size}" height="${size}" style="border-radius: 50%">`;

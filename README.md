@@ -25,7 +25,6 @@ This smart contract leverages several cutting-edge blockchain technologies:
 ## Contract Details
 
 - **Contract Address**: nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z
-- **Explorer**: View on [Nibiru Explorer](https://explorer.nibiru.fi/nibiru-testnet-2/cosmwasm/0/transactions?contract=nibi1puyh8t2ypyj6776ndh5xm43pnwlrzlkx3qgp8lcdpx7rrctdyc7qup0h9z)
 
 ## Development Setup
 
