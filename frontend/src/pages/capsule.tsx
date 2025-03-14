@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useState, useEffect, useRef } from 'react';
 import { format } from "date-fns";
 import WalletConnect from '../components/WalletConnect';
@@ -119,8 +122,8 @@ export default function Capsule() {
           </div>
           <h1 className="text-lg font-bold text-white mb-0 tracking-tight">
             <AuroraText 
-              colors={["#00FFFF", "#4CC9F0", "#9D4EDD", "#F72585"]} 
-              speed={0.8}
+              colors={["#FFFFFF", "#E2E8F0", "#B8C0F0", "#A2B0FF"]} 
+              speed={2.2}
             >
               Time Capsule
             </AuroraText>

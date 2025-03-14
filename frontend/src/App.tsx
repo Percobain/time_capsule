@@ -8,16 +8,6 @@ import Home from './pages/home';
 import Capsule from './pages/capsule';
 import { Toaster, toast } from 'sonner';
 
-// Type definition for Leap wallet
-declare global {
-  interface Window {
-    leap?: {
-      enable: (chainId: string) => Promise<void>;
-      getOfflineSigner: (chainId: string) => any;
-    }
-  }
-}
-
 function App() {
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);

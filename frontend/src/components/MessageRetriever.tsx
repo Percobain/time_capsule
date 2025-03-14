@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useState, useEffect } from 'react';
 import { NibiruQuerier, Testnet } from '@nibiruchain/nibijs';
 import { Clock, Lock, Unlock, MessageSquare, Hourglass, Calendar, Timer, ChevronDown, ChevronUp } from 'lucide-react';
@@ -267,37 +270,6 @@ const MessageRetriever = ({
           )}
         </div>
       )}
-      
-      {/* Custom animations */}
-      <style jsx>{`
-        @keyframes ping-slow {
-          0% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.4); opacity: 0.3; }
-          100% { transform: scale(1); opacity: 0.8; }
-        }
-        
-        @keyframes flip-slow {
-          0% { transform: rotateX(0deg); }
-          100% { transform: rotateX(180deg); }
-        }
-        
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-ping-slow {
-          animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-        
-        .animate-flip-slow {
-          animation: flip-slow 2s linear infinite;
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };
