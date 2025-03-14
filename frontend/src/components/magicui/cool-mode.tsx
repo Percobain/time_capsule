@@ -56,7 +56,7 @@ const applyParticleEffect = (
 ): (() => void) => {
   instanceCounter++;
 
-  const defaultParticle = "circle";
+  const defaultParticle = "nibirulogo"; // Changed default to use our logo
   const particleType = options?.particle || defaultParticle;
   const sizes = [15, 20, 25, 35, 45];
   const limit = 45;
@@ -99,6 +99,9 @@ const applyParticleEffect = (
       circleSVG.setAttribute("height", size.toString());
 
       particle.appendChild(circleSVG);
+    } else if (particleType === "nibirulogo") {
+      const logoPath = "/src/assets/nibirulogo.svg";
+      particle.innerHTML = `<img src="${logoPath}" width="${size}" height="${size}" alt="Nibiru Logo">`;
     } else {
       particle.innerHTML = `<img src="${particleType}" width="${size}" height="${size}" style="border-radius: 50%">`;
     }

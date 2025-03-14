@@ -16,3 +16,46 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #7209B7;
 }
+
+/* Add these animations to your global CSS if not already present */
+
+@keyframes scanning-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes scanning-line-reverse {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Add these to your global Tailwind utilities if they don't exist yet */
+.animate-scanning-line {
+  animation: scanning-line 4s linear infinite;
+}
+
+.animate-scanning-line-reverse {
+  animation: scanning-line-reverse 4s linear infinite;
+}
+
+.animate-gradient-x {
+  animation: gradient-x 2s linear infinite;
+  background-size: 200% 200%;
+}
